@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Книга вселенной</title>
+
   <style>
     * { box-sizing: border-box; }
 
@@ -47,6 +48,11 @@
       font-weight: bold;
     }
 
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
     .site { display: none; }
 
     .hero {
@@ -80,6 +86,7 @@
 
     .right-page {
       border-radius: 0 18px 18px 0;
+      cursor: pointer;
     }
 
     .right-page::after {
@@ -91,7 +98,6 @@
       border-style: solid;
       border-color: transparent transparent #c5a46b transparent;
       filter: drop-shadow(-3px -3px 5px rgba(0,0,0,.3));
-      cursor: pointer;
     }
 
     .fortune {
@@ -121,13 +127,13 @@
       width: 220px;
       height: 220px;
       background: conic-gradient(from 0deg, transparent, rgba(255,255,255,.45), transparent);
-      animation: spin 3s linear infinite;
+      animation: smokeSpin 3s linear infinite;
       left: -35px;
       top: -35px;
       filter: blur(12px);
     }
 
-    @keyframes spin {
+    @keyframes smokeSpin {
       to { transform: rotate(360deg); }
     }
 
@@ -149,17 +155,58 @@
       text-align: center;
       min-height: 310px;
       box-shadow: 0 0 20px rgba(160,32,240,.35);
+      margin-bottom: 25px;
     }
 
     .roulette {
-      width: 180px;
-      height: 180px;
+      width: 190px;
+      height: 190px;
       border-radius: 50%;
       margin: 15px auto;
-      background: conic-gradient(#111 0 20deg, #b60000 20deg 40deg, #111 40deg 60deg, #b60000 60deg 80deg, #111 80deg 100deg, #b60000 100deg 120deg, #111 120deg 140deg, #b60000 140deg 160deg, #111 160deg 180deg, #b60000 180deg 200deg, #111 200deg 220deg, #b60000 220deg 240deg, #111 240deg 260deg, #b60000 260deg 280deg, #111 280deg 300deg, #b60000 300deg 320deg, #111 320deg 340deg, #b60000 340deg 360deg);
+      background: conic-gradient(
+        #111 0deg 20deg,
+        #b60000 20deg 40deg,
+        #111 40deg 60deg,
+        #b60000 60deg 80deg,
+        #111 80deg 100deg,
+        #b60000 100deg 120deg,
+        #111 120deg 140deg,
+        #b60000 140deg 160deg,
+        #111 160deg 180deg,
+        #b60000 180deg 200deg,
+        #111 200deg 220deg,
+        #b60000 220deg 240deg,
+        #111 240deg 260deg,
+        #b60000 260deg 280deg,
+        #111 280deg 300deg,
+        #b60000 300deg 320deg,
+        #111 320deg 340deg,
+        #b60000 340deg 360deg
+      );
       border: 8px solid #d9b36c;
       position: relative;
-      transition: transform 3s ease-out;
+      transition: transform 3.5s ease-out;
+    }
+
+    .roulette::after {
+      content: "";
+      width: 45px;
+      height: 45px;
+      background: #d9b36c;
+      border-radius: 50%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(0,0,0,.5);
+    }
+
+    .ball-track {
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      animation: none;
+      z-index: 2;
     }
 
     .ball {
@@ -168,14 +215,35 @@
       background: white;
       border-radius: 50%;
       position: absolute;
-      top: 25px;
-      left: 82px;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px white;
+    }
+
+    .ball-spin {
+      animation: ballSpin 3.5s cubic-bezier(.15,.85,.25,1) forwards;
+    }
+
+    @keyframes ballSpin {
+      0% { transform: rotate(0deg); }
+      15% { transform: rotate(420deg); }
+      35% { transform: rotate(840deg); }
+      55% { transform: rotate(1180deg); }
+      75% { transform: rotate(1440deg); }
+      100% { transform: rotate(1620deg); }
     }
 
     .deck {
       width: 120px;
       height: 170px;
-      background: #111;
+      background: repeating-linear-gradient(
+        45deg,
+        #111,
+        #111 8px,
+        #333 8px,
+        #333 16px
+      );
       border: 3px solid white;
       border-radius: 12px;
       margin: 20px auto;
@@ -194,28 +262,38 @@
       align-items: center;
       justify-content: center;
       animation: fly .7s ease;
+      color: white;
     }
 
     @keyframes fly {
-      from { transform: translateY(-80px) rotate(-20deg); opacity: 0; }
-      to { transform: translateY(0) rotate(0); opacity: 1; }
+      from {
+        transform: translateY(-80px) rotate(-20deg);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) rotate(0);
+        opacity: 1;
+      }
     }
 
     .dice {
       font-size: 90px;
       margin: 30px;
-      animation-duration: .6s;
+      transition: transform .2s;
+      min-height: 105px;
     }
 
-    .shake {
-      animation: shake .6s;
+    .dice-flip {
+      animation: diceFlip 1.2s ease-in-out;
     }
 
-    @keyframes shake {
-      0%,100% { transform: rotate(0); }
-      25% { transform: rotate(20deg); }
-      50% { transform: rotate(-20deg); }
-      75% { transform: rotate(10deg); }
+    @keyframes diceFlip {
+      0% { transform: rotateX(0) rotateY(0) scale(1); }
+      20% { transform: rotateX(180deg) rotateY(90deg) scale(1.2); }
+      40% { transform: rotateX(360deg) rotateY(180deg) scale(.9); }
+      60% { transform: rotateX(540deg) rotateY(270deg) scale(1.15); }
+      80% { transform: rotateX(720deg) rotateY(360deg) scale(.95); }
+      100% { transform: rotateX(900deg) rotateY(540deg) scale(1); }
     }
 
     .hands {
@@ -267,12 +345,23 @@
     }
 
     @media (max-width: 750px) {
-      .games { grid-template-columns: 1fr; }
-      .book { height: auto; flex-direction: column; }
-      .page { width: 100%; min-height: 240px; }
+      .games {
+        grid-template-columns: 1fr;
+      }
+
+      .book {
+        height: auto;
+        flex-direction: column;
+      }
+
+      .page {
+        width: 100%;
+        min-height: 240px;
+      }
     }
   </style>
 </head>
+
 <body>
 
 <section class="login" id="loginScreen">
@@ -295,6 +384,7 @@
         <p>Иногда вселенная отвечает не словами, а знаками.</p>
         <p>Тот, кто открыл эту книгу, уже сделал первый шаг.</p>
       </div>
+
       <div class="page right-page" onclick="nextPage()">
         <h3 id="pageTitle">Страница 1</h3>
         <p id="pageText">Сегодня звёзды особенно внимательно наблюдают за тобой.</p>
@@ -303,9 +393,11 @@
 
     <div class="fortune">
       <div class="woman">🔮🧙‍♀️</div>
+
       <div class="crystal">
         <div class="smoke"></div>
       </div>
+
       <button onclick="askUniverse()">Спросить вселенную</button>
     </div>
   </section>
@@ -314,18 +406,26 @@
     <div>
       <div class="card-box">
         <h2>Рулетка</h2>
+
         <div class="roulette" id="roulette">
-          <div class="ball"></div>
+          <div class="ball-track" id="ballTrack">
+            <div class="ball"></div>
+          </div>
         </div>
+
         <button onclick="spinRoulette()">Крутить</button>
         <p>черное — да, красное — нет</p>
       </div>
 
       <div class="card-box">
         <h2>Карты</h2>
+
         <div class="deck"></div>
+
         <button onclick="dealCard()">Раздать</button>
+
         <div id="cardResult"></div>
+
         <p>черная — да, красная — нет</p>
       </div>
     </div>
@@ -333,19 +433,25 @@
     <div>
       <div class="card-box">
         <h2>Кубик</h2>
+
         <button onclick="throwDice()">Бросить</button>
+
         <div class="dice" id="dice">🎲</div>
+
         <p>четные — да, нечетные — нет</p>
       </div>
 
       <div class="card-box">
         <h2>Руки</h2>
+
         <div class="hands">
           <div id="leftHand">✊</div>
           <div id="rightHand">✊</div>
         </div>
+
         <button onclick="chooseGesture()">Выбрать</button>
         <button id="playBtn" onclick="playHands()" disabled>Играть</button>
+
         <p>победил я — да, победила ты — нет</p>
       </div>
     </div>
@@ -355,12 +461,15 @@
 <div class="contract-modal" id="contractModal">
   <div class="contract" id="contract">
     <h1>Контракт</h1>
+
     <p>
       Мы, нижеподписавшиеся, клянемся дружить ближайшие 15 лет.
       Через 15 лет контракт подлежит корректировкам и новому соглашению.
     </p>
+
     <button onclick="signContract()">Подписать</button>
     <button onclick="tearContract()">Разорвать</button>
+
     <div class="signature" id="signature">Ю</div>
   </div>
 </div>
@@ -374,6 +483,7 @@
 
   let currentPage = 0;
   let rightGesture = null;
+
   let completed = {
     roulette: false,
     cards: false,
@@ -384,8 +494,13 @@
   function logAction(action) {
     fetch("/api/log", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action, time: new Date().toLocaleString("ru-RU") })
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: action,
+        time: new Date().toLocaleString("ru-RU")
+      })
     }).catch(() => {});
   }
 
@@ -395,28 +510,40 @@
 
     if (login === "Татьяна" && password === "машина") {
       logAction("Успешный вход");
+
       document.getElementById("loginScreen").style.display = "none";
       document.getElementById("site").style.display = "block";
     } else {
       logAction("Неудачный вход");
+
       document.getElementById("loginError").innerText = "Неверный логин или пароль";
     }
   }
 
   function nextPage() {
     currentPage = (currentPage + 1) % pages.length;
+
     document.getElementById("pageTitle").innerText = "Страница " + (currentPage + 1);
     document.getElementById("pageText").innerText = pages[currentPage];
+
     logAction("Перелистнула страницу книги");
   }
 
   function askUniverse() {
     logAction("Нажала кнопку: спросить вселенную");
-    document.getElementById("games").scrollIntoView({ behavior: "smooth" });
+
+    document.getElementById("games").scrollIntoView({
+      behavior: "smooth"
+    });
   }
 
   function checkFinish() {
-    if (completed.roulette && completed.cards && completed.dice && completed.hands) {
+    if (
+      completed.roulette &&
+      completed.cards &&
+      completed.dice &&
+      completed.hands
+    ) {
       setTimeout(() => {
         document.getElementById("contractModal").style.display = "flex";
         logAction("Открыт контракт");
@@ -428,10 +555,17 @@
     logAction("Нажала кнопку: крутить рулетку");
 
     const roulette = document.getElementById("roulette");
-    roulette.style.transform = "rotate(" + (1440 + 360) + "deg)";
+    const ballTrack = document.getElementById("ballTrack");
+
+    roulette.style.transform = "rotate(" + (720 + Math.random() * 360) + "deg)";
+
+    ballTrack.classList.remove("ball-spin");
+    void ballTrack.offsetWidth;
+    ballTrack.classList.add("ball-spin");
 
     completed.roulette = true;
-    setTimeout(checkFinish, 3100);
+
+    setTimeout(checkFinish, 3700);
   }
 
   function dealCard() {
@@ -444,6 +578,7 @@
       `<div class="flying-card">${card}</div>`;
 
     completed.cards = true;
+
     checkFinish();
   }
 
@@ -451,30 +586,55 @@
     logAction("Нажала кнопку: бросить кубик");
 
     const dice = document.getElementById("dice");
-    dice.classList.remove("shake");
-    void dice.offsetWidth;
-    dice.classList.add("shake");
 
     const even = Math.random() < 0.65;
+
     const result = even
       ? [2, 4, 6][Math.floor(Math.random() * 3)]
       : [1, 3, 5][Math.floor(Math.random() * 3)];
 
-    setTimeout(() => {
-      dice.innerText = result;
-      completed.dice = true;
-      checkFinish();
-    }, 600);
+    const faces = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+
+    let count = 0;
+
+    dice.classList.remove("dice-flip");
+    void dice.offsetWidth;
+    dice.classList.add("dice-flip");
+
+    const interval = setInterval(() => {
+      dice.innerText = faces[Math.floor(Math.random() * faces.length)];
+      count++;
+
+      if (count > 12) {
+        clearInterval(interval);
+
+        dice.innerText = faces[result - 1];
+
+        completed.dice = true;
+
+        checkFinish();
+      }
+    }, 90);
   }
 
   function chooseGesture() {
     const gestures = [
-      { name: "камень", icon: "✊" },
-      { name: "ножницы", icon: "✌️" },
-      { name: "бумага", icon: "✋" }
+      {
+        name: "камень",
+        icon: "✊"
+      },
+      {
+        name: "ножницы",
+        icon: "✌️"
+      },
+      {
+        name: "бумага",
+        icon: "✋"
+      }
     ];
 
     rightGesture = gestures[Math.floor(Math.random() * gestures.length)];
+
     document.getElementById("rightHand").innerText = rightGesture.icon;
     document.getElementById("playBtn").disabled = false;
 
@@ -485,22 +645,34 @@
     if (!rightGesture) return;
 
     const winMap = {
-      "камень": { name: "бумага", icon: "✋" },
-      "ножницы": { name: "камень", icon: "✊" },
-      "бумага": { name: "ножницы", icon: "✌️" }
+      "камень": {
+        name: "бумага",
+        icon: "✋"
+      },
+      "ножницы": {
+        name: "камень",
+        icon: "✊"
+      },
+      "бумага": {
+        name: "ножницы",
+        icon: "✌️"
+      }
     };
 
     const left = winMap[rightGesture.name];
+
     document.getElementById("leftHand").innerText = left.icon;
 
     logAction("Нажала играть. Левая рука победила: " + left.name);
 
     completed.hands = true;
+
     checkFinish();
   }
 
   function signContract() {
     logAction("Нажала кнопку: подписать контракт");
+
     document.getElementById("signature").style.display = "block";
   }
 
@@ -508,6 +680,7 @@
     logAction("Нажала кнопку: разорвать контракт");
 
     const contract = document.getElementById("contract");
+
     contract.classList.add("tear");
 
     setTimeout(() => {
